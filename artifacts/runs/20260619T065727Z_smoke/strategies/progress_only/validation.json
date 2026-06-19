@@ -1,0 +1,23 @@
+{
+  "avg_collision_count": 1.0,
+  "avg_finish_time": null,
+  "avg_max_track_progress": 0.07772784057456021,
+  "avg_spin_time": 0.0,
+  "avg_stall_time": 0.1,
+  "avg_training_fitness": 334.2297144706089,
+  "episodes": [
+    {
+      "collision_count": 1,
+      "finish_time": null,
+      "finished_within_30s": false,
+      "frames": 61,
+      "max_track_progress": 0.07772784057456021,
+      "reset_count": 0,
+      "seed": 202,
+      "spin_time": 0.0,
+      "stall_time": 0.1,
+      "training_fitness": 334.2297144706089
+    }
+  ],
+  "finish_count": 0
+}

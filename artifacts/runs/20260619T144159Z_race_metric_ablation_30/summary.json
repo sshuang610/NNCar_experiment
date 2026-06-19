@@ -1,0 +1,429 @@
+{
+  "run_id": "20260619T144159Z_race_metric_ablation_30",
+  "strategies": [
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_proxy/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 578.0849159891599,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1602.8173333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_proxy"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_progress_focus/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 878.08491598916,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 2142.817333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 245.71870731707315
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 245.71870731707315
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_progress_focus"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_speed_focus/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 600.2915826558268,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1641.3173333333339
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 79.77870731707321
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 79.77870731707321
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_speed_focus"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_linear_time/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 558.6755826558265,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1576.4833333333327
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 49.771707317073265
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 49.771707317073265
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_linear_time"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_forward_efficiency/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 571.46491598916,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1595.3173333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 59.53870731707309
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 59.53870731707309
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_forward_efficiency"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_collision_guard/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": -121.91508401084009,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 902.8173333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": -634.2812926829268
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": -634.2812926829268
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_collision_guard"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_clearance_guard/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 577.9349159891599,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1602.3673333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_clearance_guard"
+    },
+    {
+      "best_generation": 2,
+      "best_model_path": "artifacts/runs/20260619T144159Z_race_metric_ablation_30/strategies/race_metric_finish_reward/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.039515976555114386,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.06666666666666667,
+        "avg_training_fitness": 578.0849159891599,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 63,
+            "max_track_progress": 0.06976744186046512,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 1602.8173333333334
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 203,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          },
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 37,
+            "max_track_progress": 0.024390243902439025,
+            "reset_count": 0,
+            "seed": 204,
+            "spin_time": 0.0,
+            "stall_time": 0.06666666666666667,
+            "training_fitness": 65.71870731707315
+          }
+        ],
+        "finish_count": 0
+      },
+      "completed_generations": 30,
+      "strategy_name": "race_metric_finish_reward"
+    }
+  ]
+}

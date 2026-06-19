@@ -1,0 +1,47 @@
+{
+  "avg_collision_count": 1.0,
+  "avg_finish_time": null,
+  "avg_max_track_progress": 0.07952893002759238,
+  "avg_spin_time": 0.0,
+  "avg_stall_time": 0.06666666666666667,
+  "avg_training_fitness": 1881.7576103523745,
+  "episodes": [
+    {
+      "collision_count": 1,
+      "finish_time": null,
+      "finished_within_30s": false,
+      "frames": 147,
+      "max_track_progress": 0.1395765733761894,
+      "reset_count": 0,
+      "seed": 202,
+      "spin_time": 0.0,
+      "stall_time": 0.06666666666666667,
+      "training_fitness": 3938.624549364225
+    },
+    {
+      "collision_count": 1,
+      "finish_time": null,
+      "finished_within_30s": false,
+      "frames": 72,
+      "max_track_progress": 0.04950510835329388,
+      "reset_count": 0,
+      "seed": 203,
+      "spin_time": 0.0,
+      "stall_time": 0.06666666666666667,
+      "training_fitness": 853.3241408464495
+    },
+    {
+      "collision_count": 1,
+      "finish_time": null,
+      "finished_within_30s": false,
+      "frames": 72,
+      "max_track_progress": 0.04950510835329388,
+      "reset_count": 0,
+      "seed": 204,
+      "spin_time": 0.0,
+      "stall_time": 0.06666666666666667,
+      "training_fitness": 853.3241408464495
+    }
+  ],
+  "finish_count": 0
+}

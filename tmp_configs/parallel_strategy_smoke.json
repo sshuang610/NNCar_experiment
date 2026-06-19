@@ -1,0 +1,29 @@
+{
+  "run_name": "parallel_strategy_smoke",
+  "output_dir": "/private/tmp/nncars-pipeline-smoke",
+  "architecture": [6, 6, 4],
+  "population_size": 4,
+  "generations": 1,
+  "mutation_rate": 5,
+  "train_seeds": [101],
+  "validation_seeds": [202],
+  "time_limit_seconds": 0.2,
+  "fps": 30,
+  "parallel_workers": 8,
+  "master_seed": 1234,
+  "retry_generation": 1,
+  "min_completion_rate": 0.2,
+  "max_seed_retries": 1,
+  "track_cell_size": 120,
+  "track_half_width": 34.0,
+  "strategies": [
+    { "name": "race_metric_proxy" },
+    { "name": "frontier_explorer" },
+    { "name": "risk_adjusted_pace" },
+    { "name": "centerline_pace" },
+    { "name": "two_phase_racer" },
+    { "name": "smooth_control_pace" },
+    { "name": "sparse_outcome" },
+    { "name": "sensor_balance_pace" }
+  ]
+}

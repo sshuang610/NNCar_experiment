@@ -1,0 +1,19 @@
+{
+  "run_name": "race_metric_regression",
+  "output_dir": "/private/tmp/nncars-pipeline-regression",
+  "architecture": [6, 6, 4],
+  "population_size": 20,
+  "generations": 30,
+  "mutation_rate": 90,
+  "train_seeds": [101],
+  "validation_seeds": [202, 203, 204],
+  "time_limit_seconds": 30.0,
+  "fps": 30,
+  "parallel_workers": 1,
+  "master_seed": 1234,
+  "track_cell_size": 120,
+  "track_half_width": 34.0,
+  "strategies": [
+    { "name": "race_metric_proxy" }
+  ]
+}

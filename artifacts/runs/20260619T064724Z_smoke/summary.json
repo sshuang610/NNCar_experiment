@@ -1,0 +1,61 @@
+{
+  "run_id": "20260619T064724Z_smoke",
+  "strategies": [
+    {
+      "best_generation": 1,
+      "best_model_path": "artifacts/runs/20260619T064724Z_smoke/strategies/speed_only_baseline/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 0.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.0,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 4.99999999999999,
+        "avg_training_fitness": 0.0,
+        "episodes": [
+          {
+            "collision_count": 0,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 100,
+            "max_track_progress": 0.0,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 4.99999999999999,
+            "training_fitness": 0.0
+          }
+        ],
+        "finish_count": 0
+      },
+      "strategy_name": "speed_only_baseline"
+    },
+    {
+      "best_generation": 1,
+      "best_model_path": "artifacts/runs/20260619T064724Z_smoke/strategies/progress_only/best_model.npz",
+      "best_validation": {
+        "avg_collision_count": 1.0,
+        "avg_finish_time": null,
+        "avg_max_track_progress": 0.07772784057456021,
+        "avg_spin_time": 0.0,
+        "avg_stall_time": 0.1,
+        "avg_training_fitness": 334.2297144706089,
+        "episodes": [
+          {
+            "collision_count": 1,
+            "finish_time": null,
+            "finished_within_30s": false,
+            "frames": 61,
+            "max_track_progress": 0.07772784057456021,
+            "reset_count": 0,
+            "seed": 202,
+            "spin_time": 0.0,
+            "stall_time": 0.1,
+            "training_fitness": 334.2297144706089
+          }
+        ],
+        "finish_count": 0
+      },
+      "strategy_name": "progress_only"
+    }
+  ]
+}

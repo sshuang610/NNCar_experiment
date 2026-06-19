@@ -1,0 +1,9 @@
+strategy_name,best_generation,completed_generations,validation_finish_count,finished_within_30s_any_validation,avg_finish_time,avg_max_track_progress,avg_collision_count,avg_stall_time,avg_spin_time,best_model_path
+race_metric_proxy,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_proxy/best_model.npz
+race_metric_progress_focus,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_progress_focus/best_model.npz
+race_metric_speed_focus,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_speed_focus/best_model.npz
+race_metric_linear_time,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_linear_time/best_model.npz
+race_metric_forward_efficiency,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_forward_efficiency/best_model.npz
+race_metric_collision_guard,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_collision_guard/best_model.npz
+race_metric_clearance_guard,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_clearance_guard/best_model.npz
+race_metric_finish_reward,2,30,0,False,,0.039515976555114386,1.0,0.06666666666666667,0.0,artifacts/runs/20260619T143817Z_race_metric_ablation_30/strategies/race_metric_finish_reward/best_model.npz

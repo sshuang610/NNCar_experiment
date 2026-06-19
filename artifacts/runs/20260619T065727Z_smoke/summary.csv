@@ -1,0 +1,3 @@
+strategy_name,best_generation,completed_generations,finished_within_30s_any_validation,avg_finish_time,avg_max_track_progress,best_model_path
+speed_only_baseline,1,2,False,,0.0,artifacts/runs/20260619T065727Z_smoke/strategies/speed_only_baseline/best_model.npz
+progress_only,1,2,False,,0.07772784057456021,artifacts/runs/20260619T065727Z_smoke/strategies/progress_only/best_model.npz

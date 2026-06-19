@@ -1,0 +1,20 @@
+{
+  "run_name": "smoke",
+  "output_dir": "artifacts/runs",
+  "architecture": [6, 6, 4],
+  "population_size": 4,
+  "generations": 2,
+  "mutation_rate": 5,
+  "train_seeds": [101],
+  "validation_seeds": [202],
+  "time_limit_seconds": 5.0,
+  "fps": 20,
+  "parallel_workers": 1,
+  "master_seed": 7,
+  "track_cell_size": 100,
+  "track_half_width": 34.0,
+  "strategies": [
+    { "name": "speed_only_baseline" },
+    { "name": "progress_only" }
+  ]
+}

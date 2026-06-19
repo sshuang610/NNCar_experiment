@@ -1,0 +1,34 @@
+{
+  "architecture": [
+    6,
+    6,
+    4
+  ],
+  "fitness_baseline": "score += velocity",
+  "fps": 20,
+  "generations": 2,
+  "model_architecture_version": "v1",
+  "mutation_rate": 5,
+  "parallel_workers": 1,
+  "parent_selection": "top_2_by_fitness",
+  "population_size": 4,
+  "run_id": "20260619T064724Z_smoke",
+  "run_name": "smoke",
+  "strategies": [
+    {
+      "name": "speed_only_baseline",
+      "params": {}
+    },
+    {
+      "name": "progress_only",
+      "params": {}
+    }
+  ],
+  "time_limit_seconds": 5.0,
+  "train_seeds": [
+    101
+  ],
+  "validation_seeds": [
+    202
+  ]
+}
