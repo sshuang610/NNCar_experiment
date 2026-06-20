@@ -142,8 +142,8 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
   "fps": 30,
   "parallel_workers": 8,
   "master_seed": 1234,
-  "retry_generation": 10,
-  "min_completion_rate": 0.2,
+  "retry_generation": 15,
+  "retry_min_avg_max_track_progress": 0.2,
   "max_seed_retries": 1,
   "track_cell_size": 120,
   "track_half_width": 34.0,
@@ -158,8 +158,8 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
 - `validation_seeds`：不參與父母選擇，只用於模型選擇與比較。
 - `parallel_workers`：headless 模式同時訓練的 strategy process 數量；通常設為 `min(CPU logical cores, strategy 數量)`。
 - `master_seed`：初始 network 與 mutation 的基礎 seed；pipeline 會加上 strategy name 的固定 offset，讓每個策略可重現且彼此獨立。
-- `retry_generation`：在這一代檢查該 attempt 至今最佳 validation 完賽率；若未達門檻就直接結束當前 attempt。
-- `min_completion_rate`：低於這個完賽率時安排新的 evolution seed。
+- `retry_generation`：在這一代檢查該 attempt 至今最佳 validation `avg_max_track_progress`。
+- `retry_min_avg_max_track_progress`：若到 `retry_generation` 為止，最佳 validation `avg_max_track_progress` 仍低於這個門檻，就安排新的 evolution seed。
 - `max_seed_retries`：最多額外執行幾次；設為 `1` 表示最多兩個完整 attempts。
 - `time_limit_seconds` / `fps`：episode 時限與 simulation timestep。
 - `track_cell_size` / `track_half_width`：程序化賽道尺寸。
@@ -168,16 +168,18 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
 
 ## 自動更換 Evolution Seed
 
-目前正式 config 會在 generation 10 檢查：
+目前正式 config 會在 generation 15 檢查：
 
 ```text
-best completion rate through generation 10
-  = best validation finish_count / validation seed count
+best avg_max_track_progress through generation 15
+  = max(validation avg_max_track_progress seen in this attempt so far)
 ```
 
 若結果低於 `0.2`，pipeline 會立刻停止當前 attempt，並以 `evolution_seed + 1` 重新從 generation 1 跑一個完整的 30-generation attempt，最後從兩次 attempts 選 validation ranking 最好的模型。
 
-目前有 3 個 validation seeds，所以 `0.2` 實際上代表 generation 10 前完全沒有任何 validation 完賽。觸發 retry 時，每個 strategy 最多執行 40 generations。
+這代表 retry 不再要求提早完賽，而是要求模型在 validation tracks 上至少已經展現出一定程度的前進能力。只要某一代的 validation `avg_max_track_progress` 曾經達到 `0.2`，這個 attempt 就不會在 generation 15 被提早切掉。
+
+目前有 3 個 validation seeds，所以 `avg_max_track_progress = 0.2` 可以理解成：平均而言，模型至少能跑完整條賽道的 20%。觸發 retry 時，每個 strategy 最多執行 45 generations。
 
 ## 輸出與看結果
 
@@ -198,7 +200,7 @@ artifacts/runs/<run_id>/
 
 - `manifest.json`：本次實驗設定快照。
 - `summary.csv`：跨 strategy 的主要排名表，包含最佳 attempt、evolution seed、retry 狀態、完賽數、時間、進度、碰撞、stall 與 spin。
-- `train_log.jsonl`：每一代的 training 與 validation 結果。
+- `train_log.jsonl`：每一代的 training 與 validation 結果，包含 `attempt_best_avg_max_track_progress`，可用來判讀 retry 是否會在檢查點觸發。
 - `validation.json`：最佳模型在每個 validation seed 的詳細結果。
 - `best_model.npz`：最佳 network 權重與 replay metadata。
 - `dashboard.html`：使用 `--render` 時產生的即時頁面。
