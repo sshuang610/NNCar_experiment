@@ -1,5 +1,5 @@
 {
-  "run_name": "diverse_strategy_30",
+  "run_name": "race_metric_arch_664",
   "output_dir": "artifacts/runs",
   "architecture": [6, 6, 4],
   "population_size": 20,
@@ -9,7 +9,7 @@
   "validation_seeds": [202, 203, 204],
   "time_limit_seconds": 30.0,
   "fps": 30,
-  "parallel_workers": 8,
+  "parallel_workers": 1,
   "master_seed": 1234,
   "retry_generation": 15,
   "retry_min_avg_max_track_progress": 0.2,
@@ -17,13 +17,6 @@
   "track_cell_size": 120,
   "track_half_width": 34.0,
   "strategies": [
-    { "name": "race_metric_proxy" },
-    { "name": "frontier_explorer" },
-    { "name": "risk_adjusted_pace" },
-    { "name": "centerline_pace" },
-    { "name": "two_phase_racer" },
-    { "name": "smooth_control_pace" },
-    { "name": "sparse_outcome" },
-    { "name": "sensor_balance_pace" }
+    { "name": "race_metric_proxy" }
   ]
 }

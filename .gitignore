@@ -1,0 +1,29 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Experiment outputs and replays
+artifacts/runs/
+artifacts/replays/
+
+# Generated dashboards
+dashboard.html
+
+# Generated track outputs
+# randomGeneratedTrackFront.png
+# randomGeneratedTrackBack.png

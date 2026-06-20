@@ -13,6 +13,7 @@ import numpy as np
 from .config import ExperimentConfig, StrategyConfig
 from .fitness import build_strategy
 from .nn import NeuralNetwork, mutate, uniform_crossover
+from .paths import resolve_project_path
 from .simulator import Simulator
 from .storage import append_jsonl, ensure_dir, save_model, utc_timestamp, write_json
 from .track import generate_track
@@ -149,6 +150,7 @@ def _train_strategy(
             for _ in range(config.population_size)
         ]
         attempt_best_completion_rate = 0.0
+        attempt_best_avg_max_track_progress = 0.0
         retry_this_attempt = False
 
         for generation in range(1, config.generations + 1):
@@ -173,6 +175,10 @@ def _train_strategy(
             total_completed_generations += 1
             completion_rate = validation_summary["finish_count"] / len(config.validation_seeds)
             attempt_best_completion_rate = max(attempt_best_completion_rate, completion_rate)
+            attempt_best_avg_max_track_progress = max(
+                attempt_best_avg_max_track_progress,
+                float(validation_summary["avg_max_track_progress"]),
+            )
             current_rank = _rank_key(validation_summary)
             if best_rank is None or current_rank > best_rank:
                 best_rank = current_rank
@@ -201,7 +207,7 @@ def _train_strategy(
 
             if (
                 generation == config.retry_generation
-                and attempt_best_completion_rate < config.min_completion_rate
+                and attempt_best_avg_max_track_progress < config.retry_min_avg_max_track_progress
                 and attempt <= config.max_seed_retries
             ):
                 retry_this_attempt = True
@@ -217,6 +223,7 @@ def _train_strategy(
                     "best_training_fitness": scored_population[0][1],
                     "completion_rate": completion_rate,
                     "attempt_best_completion_rate": attempt_best_completion_rate,
+                    "attempt_best_avg_max_track_progress": attempt_best_avg_max_track_progress,
                     "retry_scheduled": retry_this_attempt,
                     "parent_selection": "top_2_by_fitness",
                     "train_summary": scored_population[0][2],
@@ -245,6 +252,9 @@ def _train_strategy(
                         ),
                     }
                 )
+            if retry_this_attempt:
+                break
+
             population, parents = _breed_next_generation(
                 scored_population=scored_population,
                 population_size=config.population_size,
@@ -340,7 +350,7 @@ def _write_summary(run_dir: Path, run_id: str, results: list[dict[str, Any]]) ->
 
 def run_experiment(config: ExperimentConfig, render: bool = False) -> Path:
     run_id = f"{utc_timestamp()}_{config.run_name}"
-    run_dir = ensure_dir(Path(config.output_dir) / run_id)
+    run_dir = ensure_dir(resolve_project_path(config.output_dir) / run_id)
     ensure_dir(run_dir / "strategies")
     manifest = {
         "run_id": run_id,
@@ -356,9 +366,9 @@ def run_experiment(config: ExperimentConfig, render: bool = False) -> Path:
         "parallel_workers": config.parallel_workers,
         "strategy_randomization": "master_seed plus stable strategy-name offset",
         "retry_generation": config.retry_generation,
-        "min_completion_rate": config.min_completion_rate,
+        "retry_min_avg_max_track_progress": config.retry_min_avg_max_track_progress,
         "max_seed_retries": config.max_seed_retries,
-        "seed_retry_behavior": "complete the current attempt, then rerun with the next evolution seed",
+        "seed_retry_behavior": "stop the current attempt at retry_generation when best validation avg_max_track_progress stays below threshold, then rerun with the next evolution seed",
         "strategies": [asdict(strategy) for strategy in config.strategies],
         "model_architecture_version": "v1",
         "parent_selection": "top_2_by_fitness",
