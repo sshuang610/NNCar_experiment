@@ -6,6 +6,12 @@ import math
 import numpy as np
 from PIL import Image
 
+from pipeline.paths import (
+    GENERATED_TRACK_BACK_PATH,
+    GENERATED_TRACK_FRONT_PATH,
+    TRACK_ASSET_DIR,
+)
+
 class Cell:
     # A wall separates a pair of cells in the N-S or W-E directions.
     wall_pairs = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'}
@@ -72,43 +78,43 @@ def generateRandomMap():
     startx, starty = 0, 3
     currentCell = maze.cell_at(startx, starty)
     
-    straight1 = pygame.image.load('Images\TracksMapGen\Straight1.png')
+    straight1 = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight1.png'))
     straight1Rect = straight1.get_rect()
 
-    straight2 = pygame.image.load('Images\TracksMapGen\Straight2.png')
+    straight2 = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight2.png'))
     straight2Rect = straight2.get_rect()
 
-    curve1 = pygame.image.load('Images\TracksMapGen\Curve1.png')
+    curve1 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve1.png'))
     curve1Rect = curve1.get_rect()
 
-    curve2 = pygame.image.load('Images\TracksMapGen\Curve2.png')
+    curve2 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve2.png'))
     curve2Rect = curve2.get_rect()
 
-    curve3 = pygame.image.load('Images\TracksMapGen\Curve3.png')
+    curve3 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve3.png'))
     curve3Rect = curve3.get_rect()
 
-    curve4 = pygame.image.load('Images\TracksMapGen\Curve4.png')
+    curve4 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve4.png'))
     curve4Rect = curve4.get_rect()
 
-    straight1Top = pygame.image.load('Images\TracksMapGen\Straight1Top.png')
+    straight1Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight1Top.png'))
     straight1RectTop = straight1Top.get_rect()
 
-    straight2Top = pygame.image.load('Images\TracksMapGen\Straight2Top.png')
+    straight2Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight2Top.png'))
     straight2RectTop = straight2Top.get_rect()
 
-    curve1Top = pygame.image.load('Images\TracksMapGen\Curve1Top.png')
+    curve1Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve1Top.png'))
     curve1RectTop = curve1Top.get_rect()
 
-    curve2Top = pygame.image.load('Images\TracksMapGen\Curve2Top.png')
+    curve2Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve2Top.png'))
     curve2RectTop = curve2Top.get_rect()
 
-    curve3Top = pygame.image.load('Images\TracksMapGen\Curve3Top.png')
+    curve3Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve3Top.png'))
     curve3RectTop = curve3Top.get_rect()
 
-    curve4Top = pygame.image.load('Images\TracksMapGen\Curve4Top.png')
+    curve4Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve4Top.png'))
     curve4RectTop = curve4Top.get_rect()
 
-    bg = pygame.image.load('Images\TracksMapGen\Background.png')
+    bg = pygame.image.load(str(TRACK_ASSET_DIR / 'Background.png'))
 
     while True:
 
@@ -164,15 +170,15 @@ def generateRandomMap():
                 
                 #Save track and change background to transparent because that is how the main program needs the track image to be
                 #You can leave the black background if you change the collision condition on the main program
-                pygame.image.save(SCREEN, "randomGeneratedTrackBack.png")
-                img = Image.open("randomGeneratedTrackBack.png")
+                pygame.image.save(SCREEN, str(GENERATED_TRACK_BACK_PATH))
+                img = Image.open(GENERATED_TRACK_BACK_PATH)
                 img = img.convert("RGBA")
                 pixdata = img.load()
                 for y in range(img.size[1]):
                     for x in range(img.size[0]):
                         if pixdata[x, y] == (0, 0, 0, 255) or pixdata[x, y] == (0, 0, 1, 255):
                             pixdata[x, y] = (0, 0, 0, 0)
-                img.save("randomGeneratedTrackBack.png")
+                img.save(GENERATED_TRACK_BACK_PATH)
 
                 SCREEN.blit(bg, (0,0))  
                 for x in range(0, WINDOW_WIDTH, blockSize):
@@ -191,7 +197,7 @@ def generateRandomMap():
                         elif currentCell.walls["S"] == False and currentCell.walls["E"] == False:
                             SCREEN.blit(curve1Top, curve1RectTop.move(x-15+movex,y-15+movey)) 
                           
-                pygame.image.save(SCREEN, "randomGeneratedTrackFront.png")
+                pygame.image.save(SCREEN, str(GENERATED_TRACK_FRONT_PATH))
 
                 
                 break

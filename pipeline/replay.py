@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .fitness import build_strategy
 from .render import write_replay_svg
+from .paths import resolve_project_path
 from .simulator import Simulator
 from .storage import load_model, write_json
 from .track import generate_track
@@ -17,7 +18,8 @@ def main() -> None:
     parser.add_argument("--output-dir", default="artifacts/replays", help="Where replay outputs are written")
     args = parser.parse_args()
 
-    network, metadata = load_model(args.model)
+    model_path = resolve_project_path(args.model)
+    network, metadata = load_model(model_path)
     track = generate_track(
         seed=args.seed,
         cell_size=int(metadata.get("track_cell_size", 120)),
@@ -31,9 +33,8 @@ def main() -> None:
     strategy = build_strategy(metadata.get("strategy_name", "speed_only_baseline"))
     result = simulator.run_episode(network, strategy)
 
-    output_dir = Path(args.output_dir)
+    output_dir = resolve_project_path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    model_path = Path(args.model)
     strategy_name = model_path.parent.name
     base_name = f"{strategy_name}_{model_path.stem}_seed_{args.seed}"
     svg_path = output_dir / f"{base_name}.svg"

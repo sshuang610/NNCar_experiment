@@ -1,6 +1,5 @@
 import pygame
 import random
-import os
 import math
 import numpy as np
 import time
@@ -10,6 +9,14 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from PIL import Image
 from operator import attrgetter
+
+from pipeline.paths import (
+    GENERATED_TRACK_BACK_PATH,
+    GENERATED_TRACK_FRONT_PATH,
+    PROJECT_ROOT,
+    SPRITES_DIR,
+    TRACK_ASSET_DIR,
+)
 
 pygame.init() #Initialize pygame
 #Some variables initializations
@@ -36,13 +43,13 @@ frames = 0
 maxspeed = 10 
 number_track = 1
 
-white_small_car = pygame.image.load('Images\Sprites\white_small.png')
-white_big_car = pygame.image.load('Images\Sprites\white_big.png')
-green_small_car = pygame.image.load('Images\Sprites\green_small.png')
-green_big_car = pygame.image.load('Images\Sprites\green_big.png')
+white_small_car = pygame.image.load(str(SPRITES_DIR / 'white_small.png'))
+white_big_car = pygame.image.load(str(SPRITES_DIR / 'white_big.png'))
+green_small_car = pygame.image.load(str(SPRITES_DIR / 'green_small.png'))
+green_big_car = pygame.image.load(str(SPRITES_DIR / 'green_big.png'))
 
-bg = pygame.image.load('bg7.png')
-bg4 = pygame.image.load('bg4.png')
+bg = pygame.image.load(str(PROJECT_ROOT / 'bg7.png'))
+bg4 = pygame.image.load(str(PROJECT_ROOT / 'bg4.png'))
 
 
 def calculateDistance(x1,y1,x2,y2): #Used to calculate distance between points
@@ -270,46 +277,46 @@ def generateRandomMap(screen):
     currentCell = maze.cell_at(startx, starty)
     
     #Load track images!
-    straight1 = pygame.image.load('Images\TracksMapGen\Straight1.png')
+    straight1 = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight1.png'))
     straight1Rect = straight1.get_rect()
 
-    straight2 = pygame.image.load('Images\TracksMapGen\Straight2.png')
+    straight2 = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight2.png'))
     straight2Rect = straight2.get_rect()
 
-    curve1 = pygame.image.load('Images\TracksMapGen\Curve1.png')
+    curve1 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve1.png'))
     curve1Rect = curve1.get_rect()
 
-    curve2 = pygame.image.load('Images\TracksMapGen\Curve2.png')
+    curve2 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve2.png'))
     curve2Rect = curve2.get_rect()
 
-    curve3 = pygame.image.load('Images\TracksMapGen\Curve3.png')
+    curve3 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve3.png'))
     curve3Rect = curve3.get_rect()
 
-    curve4 = pygame.image.load('Images\TracksMapGen\Curve4.png')
+    curve4 = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve4.png'))
     curve4Rect = curve4.get_rect()
 
-    straight1Top = pygame.image.load('Images\TracksMapGen\Straight1Top.png')
+    straight1Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight1Top.png'))
     straight1RectTop = straight1Top.get_rect()
 
-    straight2Top = pygame.image.load('Images\TracksMapGen\Straight2Top.png')
+    straight2Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Straight2Top.png'))
     straight2RectTop = straight2Top.get_rect()
 
-    curve1Top = pygame.image.load('Images\TracksMapGen\Curve1Top.png')
+    curve1Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve1Top.png'))
     curve1RectTop = curve1Top.get_rect()
 
-    curve2Top = pygame.image.load('Images\TracksMapGen\Curve2Top.png')
+    curve2Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve2Top.png'))
     curve2RectTop = curve2Top.get_rect()
 
-    curve3Top = pygame.image.load('Images\TracksMapGen\Curve3Top.png')
+    curve3Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve3Top.png'))
     curve3RectTop = curve3Top.get_rect()
 
-    curve4Top = pygame.image.load('Images\TracksMapGen\Curve4Top.png')
+    curve4Top = pygame.image.load(str(TRACK_ASSET_DIR / 'Curve4Top.png'))
     curve4RectTop = curve4Top.get_rect()
     
-    initialTop = pygame.image.load('Images\TracksMapGen\Initial.png')
+    initialTop = pygame.image.load(str(TRACK_ASSET_DIR / 'Initial.png'))
     initialRectTop = initialTop.get_rect()
 
-    bg = pygame.image.load('Images\TracksMapGen\Background.png')
+    bg = pygame.image.load(str(TRACK_ASSET_DIR / 'Background.png'))
 
     while True:
 
@@ -366,15 +373,15 @@ def generateRandomMap(screen):
                 
                 #Save track and change background to transparent because that is how the main program needs the track image to be
                 #You can leave the black background if you change the collision condition on the main program
-                pygame.image.save(SCREEN, "randomGeneratedTrackBack.png")
-                img = Image.open("randomGeneratedTrackBack.png")
+                pygame.image.save(SCREEN, str(GENERATED_TRACK_BACK_PATH))
+                img = Image.open(GENERATED_TRACK_BACK_PATH)
                 img = img.convert("RGBA")
                 pixdata = img.load()
                 for y in range(img.size[1]):
                     for x in range(img.size[0]):
                         if pixdata[x, y] == (0, 0, 0, 255) or pixdata[x, y] == (0, 0, 1, 255):
                             pixdata[x, y] = (0, 0, 0, 0)
-                img.save("randomGeneratedTrackBack.png")
+                img.save(GENERATED_TRACK_BACK_PATH)
 
                 SCREEN.blit(bg, (0,0))  
                 for x in range(0, WINDOW_WIDTH, blockSize):
@@ -396,7 +403,7 @@ def generateRandomMap(screen):
                             elif currentCell.walls["S"] == False and currentCell.walls["E"] == False:
                                 SCREEN.blit(curve1Top, curve1RectTop.move(x-15+movex,y-15+movey)) 
                           
-                pygame.image.save(SCREEN, "randomGeneratedTrackFront.png")
+                pygame.image.save(SCREEN, str(GENERATED_TRACK_FRONT_PATH))
 
                 
                 break
@@ -800,8 +807,8 @@ while True:
                     nncar.angle = 180
                     nncar.collided = False
                 generateRandomMap(gameDisplay)
-                bg = pygame.image.load('randomGeneratedTrackFront.png')
-                bg4 = pygame.image.load('randomGeneratedTrackBack.png')
+                bg = pygame.image.load(str(GENERATED_TRACK_FRONT_PATH))
+                bg4 = pygame.image.load(str(GENERATED_TRACK_BACK_PATH))
 
             if event.key == ord ( "b" ):
                 if (len(selectedCars) == 2):
@@ -899,8 +906,8 @@ while True:
                         nncar.angle = 180
                         nncar.collided = False
                     generateRandomMap(gameDisplay)
-                    bg = pygame.image.load('randomGeneratedTrackFront.png')
-                    bg4 = pygame.image.load('randomGeneratedTrackBack.png')
+                    bg = pygame.image.load(str(GENERATED_TRACK_FRONT_PATH))
+                    bg4 = pygame.image.load(str(GENERATED_TRACK_BACK_PATH))
             if event.key == ord ( "r" ):
                 generation = 1
                 alive = num_of_nnCars

@@ -50,31 +50,31 @@ experiment JSON
 從 repository 根目錄執行：
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install numpy pygame pillow shapely
+uv sync
 ```
+
+這會建立或更新 `uv` 管理的虛擬環境，並安裝 `pyproject.toml` 裡宣告的套件。
 
 ## 跑實驗
 
 快速確認 pipeline 可執行：
 
 ```bash
-python3 -m pipeline.run_experiment \
+uv run python -m pipeline.run_experiment \
   --config tmp_configs/smoke_experiment.json
 ```
 
 確認 8 個 strategy worker 可以平行啟動：
 
 ```bash
-python3 -m pipeline.run_experiment \
+uv run python -m pipeline.run_experiment \
   --config tmp_configs/parallel_strategy_smoke.json
 ```
 
 執行目前建議的 30-generation 多元策略實驗：
 
 ```bash
-python3 -m pipeline.run_experiment \
+uv run python -m pipeline.run_experiment \
   --config configs/experiment_focused.json
 ```
 
@@ -83,7 +83,7 @@ python3 -m pipeline.run_experiment \
 需要即時 HTML dashboard 時加上 `--render`：
 
 ```bash
-python3 -m pipeline.run_experiment \
+uv run python -m pipeline.run_experiment \
   --config configs/experiment_focused.json \
   --render
 ```
@@ -111,16 +111,16 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
 
 `configs/experiment_focused.json` 現在比較以下策略：
 
-| Strategy | Reward 核心 | 想驗證的假設 |
-| --- | --- | --- |
-| `race_metric_proxy` | 進度、速度、目前位置、時間與事件的 dense reward | 保留目前唯一能完賽的 benchmark |
-| `frontier_explorer` | 只重獎超越本次 episode 歷史最遠位置 | 避免停在後段持續累積 `progress_ratio` 分數 |
-| `risk_adjusted_pace` | 前方空間越大，速度 reward 越高 | 學會直線加速、入彎主動降速 |
-| `centerline_pace` | 速度乘上方向對齊與中心線信心 | 找到穩定且能泛化的 racing line |
-| `two_phase_racer` | 前半段重安全與進度，後半段提高速度權重 | 先學會存活，再學會衝刺 |
-| `smooth_control_pace` | 懲罰過度轉向與原地旋轉 | 減少左右震盪造成的速度損失 |
-| `sparse_outcome` | 主要依新進度與終點事件計分 | 減少人工 shaping，直接最佳化完成比賽 |
-| `sensor_balance_pace` | 前方空間 bonus 與左右感測器不平衡 penalty | 只靠車上可觀測資訊學會留在安全走廊 |
+| Strategy              | Reward 核心                                     | 想驗證的假設                               |
+| --------------------- | ----------------------------------------------- | ------------------------------------------ |
+| `race_metric_proxy`   | 進度、速度、目前位置、時間與事件的 dense reward | 保留目前唯一能完賽的 benchmark             |
+| `frontier_explorer`   | 只重獎超越本次 episode 歷史最遠位置             | 避免停在後段持續累積 `progress_ratio` 分數 |
+| `risk_adjusted_pace`  | 前方空間越大，速度 reward 越高                  | 學會直線加速、入彎主動降速                 |
+| `centerline_pace`     | 速度乘上方向對齊與中心線信心                    | 找到穩定且能泛化的 racing line             |
+| `two_phase_racer`     | 前半段重安全與進度，後半段提高速度權重          | 先學會存活，再學會衝刺                     |
+| `smooth_control_pace` | 懲罰過度轉向與原地旋轉                          | 減少左右震盪造成的速度損失                 |
+| `sparse_outcome`      | 主要依新進度與終點事件計分                      | 減少人工 shaping，直接最佳化完成比賽       |
+| `sensor_balance_pace` | 前方空間 bonus 與左右感測器不平衡 penalty       | 只靠車上可觀測資訊學會留在安全走廊         |
 
 這些策略不是 `race_metric_proxy` 的係數微調，而是分別測試 frontier、risk、geometry、phase curriculum、control smoothness、sparse reward 與 sensor shaping。每個 strategy 的 random seed 由 `master_seed + strategy name offset` 決定，因此相同設定可以重現，也能保留既有 `race_metric_proxy` benchmark 的初始條件。
 
@@ -143,13 +143,11 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
   "parallel_workers": 8,
   "master_seed": 1234,
   "retry_generation": 15,
-  "min_completion_rate": 0.2,
+  "retry_min_avg_max_track_progress": 0.2,
   "max_seed_retries": 1,
   "track_cell_size": 120,
   "track_half_width": 34.0,
-  "strategies": [
-    { "name": "race_metric_proxy" }
-  ]
+  "strategies": [{ "name": "race_metric_proxy" }]
 }
 ```
 
@@ -160,8 +158,8 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
 - `validation_seeds`：不參與父母選擇，只用於模型選擇與比較。
 - `parallel_workers`：headless 模式同時訓練的 strategy process 數量；通常設為 `min(CPU logical cores, strategy 數量)`。
 - `master_seed`：初始 network 與 mutation 的基礎 seed；pipeline 會加上 strategy name 的固定 offset，讓每個策略可重現且彼此獨立。
-- `retry_generation`：在這一代檢查該 attempt 至今最佳 validation 完賽率。
-- `min_completion_rate`：低於這個完賽率時安排新的 evolution seed。
+- `retry_generation`：在這一代檢查該 attempt 至今最佳 validation `avg_max_track_progress`。
+- `retry_min_avg_max_track_progress`：若到 `retry_generation` 為止，最佳 validation `avg_max_track_progress` 仍低於這個門檻，就安排新的 evolution seed。
 - `max_seed_retries`：最多額外執行幾次；設為 `1` 表示最多兩個完整 attempts。
 - `time_limit_seconds` / `fps`：episode 時限與 simulation timestep。
 - `track_cell_size` / `track_half_width`：程序化賽道尺寸。
@@ -173,13 +171,15 @@ artifacts/runs/20260619T120000Z_diverse_strategy_30
 目前正式 config 會在 generation 15 檢查：
 
 ```text
-best completion rate through generation 15
-  = best validation finish_count / validation seed count
+best avg_max_track_progress through generation 15
+  = max(validation avg_max_track_progress seen in this attempt so far)
 ```
 
-若結果低於 `0.2`，pipeline 會先讓原 attempt 跑完 30 generations，再以 `evolution_seed + 1` 完整重跑一次，最後從兩次 attempts 選 validation ranking 最好的模型。保留第一個 attempt 是必要的，因為已知 `race_metric_proxy` 要到 generation 25 才首次完賽。
+若結果低於 `0.2`，pipeline 會立刻停止當前 attempt，並以 `evolution_seed + 1` 重新從 generation 1 跑一個完整的 30-generation attempt，最後從兩次 attempts 選 validation ranking 最好的模型。
 
-目前有 3 個 validation seeds，所以 `0.2` 實際上代表 generation 15 前完全沒有任何 validation 完賽。觸發 retry 時，每個 strategy 最多執行 60 generations，因此總時間可能接近兩倍。
+這代表 retry 不再要求提早完賽，而是要求模型在 validation tracks 上至少已經展現出一定程度的前進能力。只要某一代的 validation `avg_max_track_progress` 曾經達到 `0.2`，這個 attempt 就不會在 generation 15 被提早切掉。
+
+目前有 3 個 validation seeds，所以 `avg_max_track_progress = 0.2` 可以理解成：平均而言，模型至少能跑完整條賽道的 20%。觸發 retry 時，每個 strategy 最多執行 45 generations。
 
 ## 輸出與看結果
 
@@ -200,7 +200,7 @@ artifacts/runs/<run_id>/
 
 - `manifest.json`：本次實驗設定快照。
 - `summary.csv`：跨 strategy 的主要排名表，包含最佳 attempt、evolution seed、retry 狀態、完賽數、時間、進度、碰撞、stall 與 spin。
-- `train_log.jsonl`：每一代的 training 與 validation 結果。
+- `train_log.jsonl`：每一代的 training 與 validation 結果，包含 `attempt_best_avg_max_track_progress`，可用來判讀 retry 是否會在檢查點觸發。
 - `validation.json`：最佳模型在每個 validation seed 的詳細結果。
 - `best_model.npz`：最佳 network 權重與 replay metadata。
 - `dashboard.html`：使用 `--render` 時產生的即時頁面。
@@ -253,6 +253,15 @@ artifacts/replays/<run_id>/<strategy>_best_model_seed_<seed>.json
 
 `.svg` 用來檢查軌跡與撞牆位置，`.json` 包含 finish time、max progress、collision、stall 與 spin 等指標。使用 manifest 內的 validation seed 可以重現結果；使用新的 seed 可以做額外泛化測試。
 
+## 直接執行舊腳本
+
+如果想手動打開遊戲或重生地圖，也可以直接用 `uv run`：
+
+```bash
+uv run python nnCarGame.py
+uv run python mapGen.py
+```
+
 ## 下一輪篩選標準
 
 完成 `diverse_strategy_30` 後：
@@ -264,4 +273,5 @@ artifacts/replays/<run_id>/<strategy>_best_model_seed_<seed>.json
 5. 最佳 1 到 2 個策略使用更多 train seeds 與未見過的 validation seeds 再跑一次。
 
 新增策略時，在 `pipeline/fitness.py` 建立 `FitnessStrategy` subclass、實作 `score_step()`，並註冊到 `STRATEGIES`。正式比較前先把它加入 smoke config，確認可以完整產生 model、summary 與 replay。
+
 # NNCars-Fitness-Experiments

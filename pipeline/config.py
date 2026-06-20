@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .paths import resolve_project_path
+
 
 @dataclass
 class StrategyConfig:
@@ -29,8 +31,8 @@ class ExperimentConfig:
     )
     parallel_workers: int = 1
     master_seed: int = 1234
-    retry_generation: int = 15
-    min_completion_rate: float = 0.2
+    retry_generation: int = 10
+    retry_min_avg_max_track_progress: float = 0.2
     max_seed_retries: int = 0
     track_cell_size: int = 120
     track_half_width: float = 34.0
@@ -57,8 +59,13 @@ class ExperimentConfig:
             strategies=strategies,
             parallel_workers=int(data.get("parallel_workers", 1)),
             master_seed=int(data.get("master_seed", 1234)),
-            retry_generation=int(data.get("retry_generation", 15)),
-            min_completion_rate=float(data.get("min_completion_rate", 0.2)),
+            retry_generation=int(data.get("retry_generation", 10)),
+            retry_min_avg_max_track_progress=float(
+                data.get(
+                    "retry_min_avg_max_track_progress",
+                    data.get("min_completion_rate", 0.2),
+                )
+            ),
             max_seed_retries=int(data.get("max_seed_retries", 0)),
             track_cell_size=int(data.get("track_cell_size", 120)),
             track_half_width=float(data.get("track_half_width", 34.0)),
@@ -66,5 +73,5 @@ class ExperimentConfig:
 
     @classmethod
     def from_path(cls, path: str | Path) -> "ExperimentConfig":
-        with Path(path).open("r", encoding="utf-8") as handle:
+        with resolve_project_path(path).open("r", encoding="utf-8") as handle:
             return cls.from_dict(json.load(handle))

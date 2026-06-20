@@ -1,0 +1,14 @@
+[project]
+name = "neural-network-cars"
+version = "0.1.0"
+description = "Neural-network car simulation and fitness experiment tools."
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "pygame",
+  "pillow",
+  "shapely",
+]
+
+[tool.uv]
+package = false
