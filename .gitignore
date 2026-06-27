@@ -18,6 +18,7 @@ venv/
 .vscode/
 
 # Experiment outputs and replays
+# Task 8 keeps the archive tree committed; only transient run outputs stay ignored.
 artifacts/runs/
 artifacts/replays/
 
