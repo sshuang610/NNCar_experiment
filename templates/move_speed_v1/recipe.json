@@ -1,0 +1,10 @@
+{
+  "penalties": {
+    "crash": 15,
+    "stall": 35
+  },
+  "rewards": {
+    "progress": 45,
+    "speed": 55
+  }
+}
