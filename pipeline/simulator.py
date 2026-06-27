@@ -13,6 +13,40 @@ def _move(point: Point, angle: float, unit: float) -> Point:
     return point[0] + (unit * math.sin(rad)), point[1] + (unit * math.cos(rad))
 
 
+def _ray_track_distance(
+    track: Track,
+    origin: Point,
+    angle: float,
+    start: float = 10.0,
+    max_range: float = 4000.0,
+    coarse: float = 4.0,
+) -> float:
+    """Distance from origin along `angle` to the track-tube boundary.
+
+    Coarse march then binary search to ~1u precision (mirrors the old marcher).
+
+    The coarse step matches the old marcher's 4u stride so it cannot skip over a
+    thin off-track gap and lock onto a later tube re-entry (which a 12u stride
+    does near corners/parallel segments, diverging by >100u from the marcher).
+    """
+    if not track.is_on_track(_move(origin, angle, start)):
+        return start - 1.0
+    distance = start
+    while distance < max_range:
+        nxt = distance + coarse
+        if not track.is_on_track(_move(origin, angle, nxt)):
+            lo, hi = distance, nxt
+            while hi - lo > 1.0:
+                mid = (lo + hi) / 2.0
+                if track.is_on_track(_move(origin, angle, mid)):
+                    lo = mid
+                else:
+                    hi = mid
+            return lo
+        distance = nxt
+    return max_range
+
+
 def _rotate(origin: Point, point: Point, angle_radians: float) -> Point:
     ox, oy = origin
     px, py = point
@@ -76,14 +110,10 @@ class SimCar:
         self.sensor_points = []
         self.sensor_distances = []
         for sensor_angle in (0, 45, -45, 90, -90):
-            point = _move((self.x, self.y), self.angle + sensor_angle, 10)
-            for _ in range(1000):
-                if not self.track.is_on_track(point):
-                    point = _move(point, self.angle + sensor_angle, -1)
-                    break
-                point = _move(point, self.angle + sensor_angle, 4)
-            self.sensor_points.append(point)
-            self.sensor_distances.append(math.dist((self.x, self.y), point))
+            ray_angle = self.angle + sensor_angle
+            distance = _ray_track_distance(self.track, (self.x, self.y), ray_angle)
+            self.sensor_points.append(_move((self.x, self.y), ray_angle, distance))
+            self.sensor_distances.append(distance)
         self.progress, self.center_offset = self.track.project((self.x, self.y))
 
     def reset_position(self) -> None:

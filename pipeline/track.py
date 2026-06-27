@@ -77,8 +77,28 @@ class Track:
         return best_progress, best_distance
 
     def is_on_track(self, point: Point) -> bool:
-        _, distance = self.project(point)
-        return distance <= self.half_width
+        hw_sq = self.half_width * self.half_width
+        px, py = point
+        for start, end in zip(self.polyline[:-1], self.polyline[1:]):
+            vx = end[0] - start[0]
+            vy = end[1] - start[1]
+            seg_len_sq = (vx * vx) + (vy * vy)
+            if seg_len_sq == 0.0:
+                dx = px - start[0]
+                dy = py - start[1]
+                if (dx * dx) + (dy * dy) <= hw_sq:
+                    return True
+                continue
+            ux = px - start[0]
+            uy = py - start[1]
+            t = max(0.0, min(1.0, ((ux * vx) + (uy * vy)) / seg_len_sq))
+            cx = start[0] + (vx * t)
+            cy = start[1] + (vy * t)
+            dx = px - cx
+            dy = py - cy
+            if (dx * dx) + (dy * dy) <= hw_sq:
+                return True
+        return False
 
 
 @dataclass
