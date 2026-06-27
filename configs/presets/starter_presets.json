@@ -9,7 +9,7 @@
   "validation_seeds": [202, 203, 204],
   "time_limit_seconds": 30.0,
   "fps": 30,
-  "parallel_workers": 6,
+  "parallel_workers": 4,
   "master_seed": 1234,
   "retry_generation": 15,
   "retry_min_avg_max_track_progress": 0.2,
