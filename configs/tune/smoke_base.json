@@ -1,0 +1,18 @@
+{
+  "run_name": "tune_smoke",
+  "output_dir": "artifacts/runs",
+  "architecture": [6, 6, 4],
+  "population_size": 6,
+  "generations": 2,
+  "train_seeds": [101],
+  "validation_seeds": [202],
+  "time_limit_seconds": 10.0,
+  "fps": 30,
+  "parallel_workers": 3,
+  "master_seed": 1234,
+  "max_seed_retries": 0,
+  "strategies": [
+    { "name": "base", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 50, "speed": 30}, "penalties": {"crash": 80} } }
+  ]
+}
