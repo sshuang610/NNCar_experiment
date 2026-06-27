@@ -8,10 +8,18 @@ from typing import Any
 from .paths import resolve_project_path
 
 
+_BASELINE_NAMES = {"speed_only_baseline", "progress_only"}
+
+
 @dataclass
 class StrategyConfig:
     name: str
+    strategy: str = "beginner_mix"
     params: dict[str, Any] = field(default_factory=dict)
+
+
+def _default_strategy_type(name: str) -> str:
+    return name if name in _BASELINE_NAMES else "beginner_mix"
 
 
 @dataclass
@@ -40,7 +48,11 @@ class ExperimentConfig:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ExperimentConfig":
         strategies = [
-            StrategyConfig(name=item["name"], params=item.get("params", {}))
+            StrategyConfig(
+                name=item["name"],
+                strategy=item.get("strategy", _default_strategy_type(item["name"])),
+                params=item.get("params", {}),
+            )
             for item in data.get("strategies", [{"name": "speed_only_baseline"}])
         ]
         return cls(
