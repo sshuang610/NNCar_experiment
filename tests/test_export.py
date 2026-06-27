@@ -15,6 +15,10 @@ def test_export_final_goal_model_has_correct_flattened_shapes(tmp_path):
     assert model["username"] == "alice"
     assert [len(model["weights"][0]), len(model["weights"][1])] == [36, 24]
     assert [len(model["biases"][0]), len(model["biases"][1])] == [6, 4]
+    np.testing.assert_allclose(model["weights"][0], net.weights[0].reshape(-1))
+    np.testing.assert_allclose(model["weights"][1], net.weights[1].reshape(-1))
+    np.testing.assert_allclose(model["biases"][0], net.biases[0].reshape(-1))
+    np.testing.assert_allclose(model["biases"][1], net.biases[1].reshape(-1))
 
 
 def test_promote_template_writes_five_files(tmp_path):
