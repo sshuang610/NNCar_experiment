@@ -30,7 +30,10 @@ def main() -> None:
         fps=int(metadata.get("fps", 30)),
         time_limit_seconds=float(metadata.get("time_limit_seconds", 30.0)),
     )
-    strategy = build_strategy(metadata.get("strategy_name", "speed_only_baseline"))
+    strategy = build_strategy(
+        metadata.get("strategy", metadata.get("strategy_name", "speed_only_baseline")),
+        metadata.get("strategy_params"),
+    )
     result = simulator.run_episode(network, strategy)
 
     output_dir = resolve_project_path(args.output_dir)

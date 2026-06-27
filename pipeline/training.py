@@ -6,6 +6,7 @@ from dataclasses import asdict
 import multiprocessing as mp
 from pathlib import Path
 import random
+import subprocess
 from typing import Any
 
 import numpy as np
@@ -33,10 +34,10 @@ def _stable_strategy_seed(master_seed: int, strategy_name: str) -> int:
 def _evaluate_network(
     network: NeuralNetwork,
     seeds: list[int],
-    strategy_name: str,
+    strategy_config: StrategyConfig,
     config: ExperimentConfig,
 ) -> tuple[float, dict[str, float], list[dict[str, Any]]]:
-    strategy = build_strategy(strategy_name)
+    strategy = build_strategy(strategy_config.strategy, strategy_config.params)
     episode_metrics: list[dict[str, Any]] = []
     training_fitness: list[float] = []
     finish_times: list[float] = []
@@ -78,7 +79,7 @@ def _evaluate_network(
 
 def _render_payload(
     network: NeuralNetwork,
-    strategy_name: str,
+    strategy_config: StrategyConfig,
     seed: int,
     config: ExperimentConfig,
 ) -> dict[str, Any]:
@@ -88,7 +89,7 @@ def _render_payload(
         half_width=config.track_half_width,
     )
     simulator = Simulator(track=track, fps=config.fps, time_limit_seconds=config.time_limit_seconds)
-    result = simulator.run_episode(network, build_strategy(strategy_name))
+    result = simulator.run_episode(network, build_strategy(strategy_config.strategy, strategy_config.params))
     stride = max(1, len(result.trajectory) // 200)
     return {
         "seed": seed,
@@ -159,7 +160,7 @@ def _train_strategy(
                 train_score, train_summary, _ = _evaluate_network(
                     network=network,
                     seeds=config.train_seeds,
-                    strategy_name=strategy_config.name,
+                    strategy_config=strategy_config,
                     config=config,
                 )
                 scored_population.append((network, train_score, train_summary))
@@ -169,7 +170,7 @@ def _train_strategy(
             _, validation_summary, validation_episodes = _evaluate_network(
                 network=best_train_network,
                 seeds=config.validation_seeds,
-                strategy_name=strategy_config.name,
+                strategy_config=strategy_config,
                 config=config,
             )
             total_completed_generations += 1
@@ -191,6 +192,8 @@ def _train_strategy(
                 }
                 best_metadata = {
                     "strategy_name": strategy_config.name,
+                    "strategy": strategy_config.strategy,
+                    "strategy_params": strategy_config.params,
                     "architecture": config.architecture,
                     "generation": generation,
                     "attempt": attempt,
@@ -246,7 +249,7 @@ def _train_strategy(
                         "validation_summary": validation_summary,
                         "render": _render_payload(
                             network=best_train_network,
-                            strategy_name=strategy_config.name,
+                            strategy_config=strategy_config,
                             seed=config.train_seeds[0],
                             config=config,
                         ),
@@ -348,6 +351,18 @@ def _write_summary(run_dir: Path, run_id: str, results: list[dict[str, Any]]) ->
             )
 
 
+def _git_commit() -> str:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=resolve_project_path("."),
+            capture_output=True, text=True, check=True,
+        )
+        return out.stdout.strip()
+    except Exception:
+        return "unknown"
+
+
 def run_experiment(config: ExperimentConfig, render: bool = False) -> Path:
     run_id = f"{utc_timestamp()}_{config.run_name}"
     run_dir = ensure_dir(resolve_project_path(config.output_dir) / run_id)
@@ -355,6 +370,7 @@ def run_experiment(config: ExperimentConfig, render: bool = False) -> Path:
     manifest = {
         "run_id": run_id,
         "run_name": config.run_name,
+        "git_commit": _git_commit(),
         "architecture": config.architecture,
         "population_size": config.population_size,
         "generations": config.generations,
