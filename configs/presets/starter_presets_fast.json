@@ -32,6 +32,9 @@
     { "name": "low_crash_explore", "strategy": "beginner_mix",
       "params": { "rewards": {"progress": 50, "speed": 50},
                   "penalties": {"stall": 50, "crash": 5} } },
+    { "name": "checkpoint_racer", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 45, "speed": 35, "checkpoint": 60},
+                  "penalties": {"stall": 40, "crash": 15} } },
     { "name": "speed_only_baseline", "strategy": "speed_only_baseline" },
     { "name": "progress_only", "strategy": "progress_only" }
   ]
