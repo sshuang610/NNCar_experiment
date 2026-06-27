@@ -3,11 +3,12 @@ from __future__ import annotations
 import argparse
 import copy
 import json
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Any
 
 from .config import ExperimentConfig, StrategyConfig
+from .paths import resolve_project_path
 from .training import run_experiment
 
 
@@ -72,11 +73,24 @@ def run_round(config: ExperimentConfig, step: float) -> ExperimentConfig:
     return _pick_winner(run_dir, config)
 
 
+def write_winner_config(config: ExperimentConfig, out_path: str | Path) -> Path:
+    """Serialize the tuned winner ExperimentConfig to a re-runnable config JSON."""
+    path = resolve_project_path(out_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(asdict(config), indent=2), encoding="utf-8")
+    return path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Coordinate-search auto-tune for BeginnerMix recipes.")
     parser.add_argument("--base-config", required=True)
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--step", type=float, default=15.0)
+    parser.add_argument(
+        "--out",
+        default=None,
+        help="Write the final tuned winner config JSON here (re-runnable by run_experiment).",
+    )
     args = parser.parse_args()
 
     config = ExperimentConfig.from_path(args.base_config)
@@ -84,6 +98,10 @@ def main() -> None:
         config = run_round(config, args.step)
         winner = _base_strategy(config)
         print(f"round {round_idx} winner params: {json.dumps(winner.params)}")
+
+    if args.out:
+        out_path = write_winner_config(config, args.out)
+        print(f"winner config written to {out_path}")
 
 
 if __name__ == "__main__":

@@ -16,9 +16,18 @@
 # Stage 1: presets
 uv run python -m pipeline.run_experiment --config configs/presets/starter_presets.json
 
-# Stage 2: auto-tune around a winner
-uv run python -m pipeline.tune --base-config configs/tune/auto_base.json --rounds 2 --step 15
+# Stage 2: auto-tune around a winner（--out 會把調好的 winner 配方寫出，供 promote 使用）
+uv run python -m pipeline.tune \
+  --base-config configs/tune/auto_base.json \
+  --out configs/tune/auto_winner.json \
+  --rounds 2 --step 15
+
+# Stage 3: 用調好的 winner 跑一次乾淨 run，再 promote 成 template
+uv run python -m pipeline.run_experiment --config configs/tune/auto_winner.json
+uv run python -c "from pipeline.export import promote_template; promote_template('<那個 run dir>', 'base', 'winner_v1')"
 ```
+
+> 注意：`pipeline.tune` 只有加上 `--out` 才會把調校後的 winner 配方存檔。沒有 `--out` 時它只印出 winner，調校結果不會被保存，promote 就會誤用未調校的 base 配方。
 
 更多 block 規格與調參方式請看 [docs/beginner_mix.md](docs/beginner_mix.md)，Colab 入口請看 [notebooks/run_experiments.ipynb](notebooks/run_experiments.ipynb)。
 
