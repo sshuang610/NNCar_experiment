@@ -1,0 +1,22 @@
+{
+  "run_name": "beginner_mix_smoke",
+  "output_dir": "artifacts/runs",
+  "architecture": [6, 6, 4],
+  "population_size": 6,
+  "generations": 2,
+  "mutation_rate": 90,
+  "train_seeds": [101],
+  "validation_seeds": [202],
+  "time_limit_seconds": 10.0,
+  "fps": 30,
+  "parallel_workers": 2,
+  "master_seed": 1234,
+  "max_seed_retries": 0,
+  "track_cell_size": 120,
+  "track_half_width": 34.0,
+  "strategies": [
+    { "name": "progress_first", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 50, "speed": 20}, "penalties": {"stall": 60, "crash": 80} } },
+    { "name": "speed_only_baseline", "strategy": "speed_only_baseline" }
+  ]
+}
