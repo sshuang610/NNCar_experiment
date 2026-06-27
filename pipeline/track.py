@@ -76,10 +76,36 @@ class Track:
             traversed += seg_len
         return best_progress, best_distance
 
+    def _segment_index(self):
+        cached = getattr(self, "_seg_index_cache", None)
+        if cached is not None:
+            return cached
+        bucket = float(self.cell_size) if self.cell_size > 0 else 1.0
+        segments = list(zip(self.polyline[:-1], self.polyline[1:]))
+        grid: dict[tuple[int, int], list[int]] = {}
+        hw = self.half_width
+        for idx, (s, e) in enumerate(segments):
+            min_x = min(s[0], e[0]) - hw
+            max_x = max(s[0], e[0]) + hw
+            min_y = min(s[1], e[1]) - hw
+            max_y = max(s[1], e[1]) + hw
+            for cx in range(int(math.floor(min_x / bucket)), int(math.floor(max_x / bucket)) + 1):
+                for cy in range(int(math.floor(min_y / bucket)), int(math.floor(max_y / bucket)) + 1):
+                    grid.setdefault((cx, cy), []).append(idx)
+        cached = (grid, bucket, segments)
+        self._seg_index_cache = cached
+        return cached
+
     def is_on_track(self, point: Point) -> bool:
-        hw_sq = self.half_width * self.half_width
+        grid, bucket, segments = self._segment_index()
         px, py = point
-        for start, end in zip(self.polyline[:-1], self.polyline[1:]):
+        hw_sq = self.half_width * self.half_width
+        cell = (int(math.floor(px / bucket)), int(math.floor(py / bucket)))
+        candidates = grid.get(cell)
+        if not candidates:
+            return False
+        for idx in candidates:
+            start, end = segments[idx]
             vx = end[0] - start[0]
             vy = end[1] - start[1]
             seg_len_sq = (vx * vx) + (vy * vy)
