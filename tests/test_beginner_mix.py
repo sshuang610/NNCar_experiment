@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pipeline.fitness import BeginnerMix, FINISH_BONUS, B_CRASH
+from pipeline.fitness import BeginnerMix, FINISH_BONUS, B_CRASH, B_CHECKPOINT
 from pipeline.simulator import StepContext
 
 
@@ -76,3 +76,28 @@ def test_finish_adds_fixed_bonus():
 def test_negative_penalty_is_clamped_to_zero():
     strat = BeginnerMix(); strat.configure({"penalties": {"stall": -50}})
     assert strat.penalties["stall"] == 0.0
+
+
+def test_checkpoint_excluded_from_normalized_reward():
+    a = BeginnerMix(); a.configure({"rewards": {"progress": 50}})
+    b = BeginnerMix(); b.configure({"rewards": {"progress": 50, "checkpoint": 100}})
+    a.reset(); b.reset()
+    # progress_ratio below first milestone -> no checkpoint award; per-frame reward identical
+    c = ctx(progress_delta=5.0, progress_ratio=0.05)
+    assert a.score_step(c) == b.score_step(c)
+
+
+def test_checkpoint_awards_once_per_milestone():
+    strat = BeginnerMix(); strat.configure({"rewards": {"checkpoint": 100}}); strat.reset()
+    # default marks (0.2, 0.4, 0.6, 0.8, 0.95): crossing 0.45 awards for 0.2 and 0.4
+    step = strat.score_step(ctx(progress_ratio=0.45))
+    assert abs(step - 2 * B_CHECKPOINT) < 1e-9
+    # same ratio next step -> no further award
+    assert abs(strat.score_step(ctx(progress_ratio=0.45))) < 1e-9
+
+
+def test_checkpoint_reset_reawards():
+    strat = BeginnerMix(); strat.configure({"rewards": {"checkpoint": 100}}); strat.reset()
+    strat.score_step(ctx(progress_ratio=0.25))   # awards milestone 0.2
+    strat.reset()
+    assert abs(strat.score_step(ctx(progress_ratio=0.25)) - B_CHECKPOINT) < 1e-9

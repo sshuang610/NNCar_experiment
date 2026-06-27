@@ -38,6 +38,9 @@ CRASH_SECONDS = 15.0
 B_CRASH = B * CRASH_SECONDS          # 150.0
 FINISH_SECONDS = 300.0
 FINISH_BONUS = B * FINISH_SECONDS    # 3000.0
+CHECKPOINT_SECONDS = 5.0
+B_CHECKPOINT = B * CHECKPOINT_SECONDS      # 50.0
+DEFAULT_CHECKPOINTS = (0.2, 0.4, 0.6, 0.8, 0.95)
 
 REWARD_BLOCKS = ("speed", "progress", "centered", "alignment", "safety")
 PERSTEP_PENALTY_BLOCKS = ("stall", "spin", "wrong_way", "time")
@@ -56,10 +59,18 @@ class BeginnerMix(FitnessStrategy):
     def __init__(self) -> None:
         self.rewards: dict[str, float] = {}
         self.penalties: dict[str, float] = {}
+        self._checkpoints = list(DEFAULT_CHECKPOINTS)
+        self._next_checkpoint = 0
+
+    def reset(self) -> None:
+        self._next_checkpoint = 0
 
     def configure(self, params: dict) -> None:
         rewards, penalties = _split_params(params)
-        self.rewards = {k: float(v) for k, v in rewards.items() if k in REWARD_BLOCKS}
+        self.rewards = {
+            k: float(v) for k, v in rewards.items()
+            if k in REWARD_BLOCKS or k == "checkpoint"
+        }
         self.penalties = {
             k: max(0.0, float(v))
             for k, v in penalties.items()
@@ -87,10 +98,11 @@ class BeginnerMix(FitnessStrategy):
         dt = context.time_elapsed / context.frame if context.frame else 0.0
 
         reward = 0.0
-        weight_sum = sum(self.rewards.values())
+        per_frame = {k: v for k, v in self.rewards.items() if k in REWARD_BLOCKS}
+        weight_sum = sum(per_frame.values())
         if weight_sum > 0.0:
             factors = self._reward_factors(context)
-            weighted = sum(self.rewards[k] * factors[k] for k in self.rewards)
+            weighted = sum(per_frame[k] * factors[k] for k in per_frame)
             reward = (weighted / weight_sum) * B * dt
 
         penalty = 0.0
@@ -105,6 +117,15 @@ class BeginnerMix(FitnessStrategy):
             step -= (self.penalties.get("crash", 0.0) / 100.0) * B_CRASH
         if context.finished:
             step += FINISH_BONUS
+
+        cp_weight = self.rewards.get("checkpoint", 0.0)
+        if cp_weight > 0.0:
+            while (
+                self._next_checkpoint < len(self._checkpoints)
+                and context.progress_ratio >= self._checkpoints[self._next_checkpoint]
+            ):
+                step += (cp_weight / 100.0) * B_CHECKPOINT
+                self._next_checkpoint += 1
         return step
 
 
