@@ -101,14 +101,28 @@
 
 → **加大網路一律更差**。原因：權重變多 → 搜尋空間變大 → 這個弱 GA（隨機初始 + top-2 突變）在同樣代數內找不到好解。**6→6→4 小網路反而是這個 GA 的甜蜜點**。架構放大是死路；真正的槓桿是 GA 的搜尋能力（population / mutation / selection）。
 
+### 5.7 加大 population / 降 mutation 也更差——GA 高變異、config 空間已耗盡
+最後一個 config-only 槓桿：小網路 + **pop 60、mutation 30、150 代**（理論上搜尋力更強）。結果 `progress_safe` 從 66% 掉到 **8.6%、全部撞牆**。
+
+→ 重點發現：**66% 的結果其實很脆弱，這個 GA 高變異**——只改 GA 超參數，結果就在 8%~66% 之間劇烈擺盪。原本的 66% 仰賴 **高 mutation(90) + pop 24** 的特定組合；降 mutation 反而過早收斂到撞牆解。
+
+**結論：config-only 空間已耗盡。** 加大網路、checkpoint、往 speed 調、加代數、加 population/降 mutation——全部不是更差就是不可靠。唯一可重現的好設定就是旗艦 template 的那組（pop24 / mut90 / gen60 / 放寬賽道 / safety 配方）。真正的瓶頸是**弱且高變異的 GA**。
+
 ## 6. 目前產出的 template
 
 - `templates/progress_safe_wide_v1/`（**旗艦**）：`rewards {progress:50, speed:30, safety:20}`, `penalties {stall:40, crash:25}`，放寬賽道（half_width 55）。validation 66% / 0 碰撞；給足時間會完賽（seed 202 約 49.7s）。目前最強模型。
 - `templates/move_speed_v1/`：早期弱 baseline（窄賽道 ~6.5%）。
 
-## 7. 建議的下一步（依優先序）
+## 7. 建議的下一步（依優先序，已更新）
 
-1. **要 30 秒內完賽的競賽模型**：這已非 fitness 問題，建議動架構——加大隱藏層（如 6→12→4 或 6→8→8→4）、或強化 GA（保留更多 parents、tournament selection、調 mutation sigma）。
-2. **curriculum**：先在放寬賽道（55）訓練出會開的 driver，再逐步收窄（55→48→40→34），把「會導航」遷移到競賽寬度。
-3. **fitness 推薦（已收斂）**：主力 `progress` + `speed`，**務必含 `safety`** 才不會撞牆；`crash` 5~25；避免高 `checkpoint`；speed 不要壓過 safety。`progress_safe` 配方為推薦起點。
-4. 窄賽道若仍要硬解：結合 1+2（大 NN + curriculum）。
+config-only 已證實耗盡（§5.6、§5.7：加大網路、加 population、降 mutation 全部更差）。剩下的真正槓桿都需要改程式：
+
+1. **強化 GA（最高槓桿，需改 `training.py`/`nn.py`）**：目前是「隨機初始 + 取 top-2 突變」的弱演化，高變異。建議加：
+   - **elitism**：每代原封不動保留最佳個體（避免好解被突變破壞，直接降變異）。
+   - **tournament selection**：用錦標賽選親代，而非只取 top-2。
+   - **多 seed 平均 / restart**：每個 attempt 跑多個 evolution seed 取最佳，壓低 §5.7 觀察到的高變異。
+   - 可調 mutation sigma（目前 `uniform(0.8,1.2)` 乘法突變寫死）。
+2. **curriculum（需 warm-start 功能）**：pipeline 目前每次從隨機族群開始，無法承接。要做 curriculum（放寬→收窄 55→48→40→34）需新增「以既有 model 初始化族群」的功能。
+3. **fitness 推薦（已收斂，可直接交付）**：主力 `progress` + `speed`，**務必含 `safety`** 才不會撞牆；`crash` 5~25；避免高 `checkpoint`；speed 不要壓過 safety；mutation 偏高（~90）+ 小網路（6→6→4）。`progress_safe` 配方為推薦起點。
+
+**目前可交付狀態**：fitness 研究結論完整（§1~§7）+ 旗艦 template（`progress_safe_wide_v1`，可重現、放寬賽道會完賽）。要再往「30 秒內、競賽寬度完賽」推進，必須先做第 1 項（強化 GA）。
