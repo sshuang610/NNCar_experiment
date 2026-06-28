@@ -66,8 +66,37 @@
 - 證明整條 pipeline（preset → 訓練 → promote → final_goal model JSON 匯出）可端到端運作且可重現。
 - 提供一個「會動」的起點配方，之後在更大算力上再加代數 / auto-tune。
 
-## 5. 建議的下一步
+## 5. 第二輪（2026-06-28）：simulator 加速 + checkpoint + 賽道難度
 
-1. 想要會完賽的 template：用更大算力（Colab/多核）跑 `generations ≥ 30`、`population ≥ 20`，並對 §2 的 motion-first 配方做 auto-tune。
-2. 若要在本機續跑：先評估是否優化 sensor raycast，否則每輪數小時。
-3. preset 推薦範圍（給 Game Engine UI 預設）：`crash` 建議 5~25（避免死車）、主力獎勵放 `progress`/`speed`、定位型獎勵初期小給。
+### 5.1 simulator 加速 ~25×
+把 `Track.is_on_track` 改成 early-exit + 空間索引、sensor raycast 改成 coarse-then-fine，端到端從 **5.79 ms/frame → 0.23 ms/frame（~25×）**，行為不變（is_on_track 在 40 萬點 0 mismatch）。原本 3.7 小時的 run 現在約 9 分鐘。這讓高代數實驗變可行。
+
+### 5.2 更多代數沒有打破窄賽道的 ~8% plateau
+在標準窄賽道（half_width 34）上，非-checkpoint 的 motion 配方跑到 **120–150 代仍只有 ~6–8.6%、0 完賽**。→ 窄賽道的瓶頸不是代數，是「一動就在彎道撞牆」。
+
+### 5.3 關鍵突破：放寬賽道 + `safety` 獎勵 = 真正會導航
+把 `track_half_width` 從 34 放寬到 55 後：
+- **`progress_safe`（唯一含 `safety` 獎勵的配方）→ 賽道 66%、0 碰撞、兩個 seed 都跑完整 30 秒不撞牆。** 其餘配方仍 ~8%（照撞）。
+- → **`safety` 獎勵是「學會不撞牆」的關鍵成分**；放寬賽道讓這個小 NN/GA 有空間學會導航。
+
+### 5.4 `checkpoint` block 沒有幫助
+4 個 checkpoint 配方在放寬賽道上都輸給 `progress_safe`，部分甚至 stall（一次性大獎勵反而誘發退化行為）。→ checkpoint 這條線可放棄。
+
+### 5.5 加速度 vs 安全是硬取捨；瓶頸轉為「能力」而非 fitness
+把 `progress_safe` 往 speed 調（降 safety、升 speed）→ **全部變差**（更會撞、跑更短）。用更長 time_limit 測 `progress_safe` 存下的模型：
+- seed 202：給 60s **會完賽（49.7s、100%、0 碰撞）** → 是「會開但太慢」的完整 driver。
+- seed 203：~90% 處撞牆 → 接近完成但泛化還不夠穩。
+
+→ 要在 30 秒內完賽，需要「又快又不撞」，這超出目前 6→6→4 NN + 簡單 GA 在此代數內的能力。**瓶頸已從 fitness 配方轉為模型能力（NN 大小 / 感測器 / GA）。**
+
+## 6. 目前產出的 template
+
+- `templates/progress_safe_wide_v1/`（**旗艦**）：`rewards {progress:50, speed:30, safety:20}`, `penalties {stall:40, crash:25}`，放寬賽道（half_width 55）。validation 66% / 0 碰撞；給足時間會完賽（seed 202 約 49.7s）。目前最強模型。
+- `templates/move_speed_v1/`：早期弱 baseline（窄賽道 ~6.5%）。
+
+## 7. 建議的下一步（依優先序）
+
+1. **要 30 秒內完賽的競賽模型**：這已非 fitness 問題，建議動架構——加大隱藏層（如 6→12→4 或 6→8→8→4）、或強化 GA（保留更多 parents、tournament selection、調 mutation sigma）。
+2. **curriculum**：先在放寬賽道（55）訓練出會開的 driver，再逐步收窄（55→48→40→34），把「會導航」遷移到競賽寬度。
+3. **fitness 推薦（已收斂）**：主力 `progress` + `speed`，**務必含 `safety`** 才不會撞牆；`crash` 5~25；避免高 `checkpoint`；speed 不要壓過 safety。`progress_safe` 配方為推薦起點。
+4. 窄賽道若仍要硬解：結合 1+2（大 NN + curriculum）。

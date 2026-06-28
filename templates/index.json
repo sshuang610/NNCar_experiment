@@ -15,6 +15,23 @@
           "speed": 55
         }
       }
+    },
+    {
+      "avg_finish_time": null,
+      "avg_max_track_progress": 0.6617347619897799,
+      "finish_count": 0,
+      "name": "progress_safe_wide_v1",
+      "recipe": {
+        "penalties": {
+          "crash": 25,
+          "stall": 40
+        },
+        "rewards": {
+          "progress": 50,
+          "safety": 20,
+          "speed": 30
+        }
+      }
     }
   ]
 }

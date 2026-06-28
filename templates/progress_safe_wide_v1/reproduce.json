@@ -1,0 +1,39 @@
+{
+  "architecture": [
+    6,
+    6,
+    4
+  ],
+  "evolution_seed": 2629,
+  "fps": 30,
+  "generations": 80,
+  "git_commit": "abbbace83d1361d712c021ea099c54beb7bf7a38",
+  "master_seed": null,
+  "mutation_rate": 90,
+  "params": {
+    "penalties": {
+      "crash": 25,
+      "stall": 40
+    },
+    "rewards": {
+      "progress": 50,
+      "safety": 20,
+      "speed": 30
+    }
+  },
+  "population_size": 24,
+  "run_id": "20260628T041051Z_finish_push",
+  "strategy": "beginner_mix",
+  "strategy_name": "progress_safe",
+  "template_name": "progress_safe_wide_v1",
+  "time_limit_seconds": 30.0,
+  "track_cell_size": null,
+  "track_half_width": null,
+  "train_seeds": [
+    101
+  ],
+  "validation_seeds": [
+    202,
+    203
+  ]
+}
