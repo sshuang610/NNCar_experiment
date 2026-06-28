@@ -1,0 +1,27 @@
+{
+  "run_name": "ga_power",
+  "output_dir": "artifacts/runs",
+  "architecture": [6, 6, 4],
+  "population_size": 60,
+  "generations": 150,
+  "mutation_rate": 30,
+  "train_seeds": [101],
+  "validation_seeds": [202, 203],
+  "time_limit_seconds": 30.0,
+  "fps": 30,
+  "parallel_workers": 4,
+  "master_seed": 1234,
+  "max_seed_retries": 0,
+  "track_cell_size": 120,
+  "track_half_width": 55.0,
+  "strategies": [
+    { "name": "progress_safe", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 50, "speed": 30, "safety": 20}, "penalties": {"stall": 40, "crash": 25} } },
+    { "name": "ps_balanced", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 50, "speed": 40, "safety": 10}, "penalties": {"stall": 40, "crash": 25} } },
+    { "name": "ps_more_safe", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 45, "speed": 25, "safety": 30}, "penalties": {"stall": 40, "crash": 25} } },
+    { "name": "ps_safe_speed", "strategy": "beginner_mix",
+      "params": { "rewards": {"progress": 45, "speed": 35, "safety": 20}, "penalties": {"stall": 40, "crash": 20} } }
+  ]
+}
